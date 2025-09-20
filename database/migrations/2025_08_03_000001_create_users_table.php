@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('password_usuario');
             $table->string('url_img_usuario')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('ciudad_usuario')->nullable();
+            $table->string('alias_usuario')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

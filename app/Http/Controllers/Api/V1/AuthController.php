@@ -10,47 +10,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse; // Se ha añadido esta importación
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Log;
 
 class AuthController extends Controller
 {
-    // public function registro(RegisterRequest $request)
-    // {
-    //     try{
-    //         $validatedData = $request->validated();
-    //         $usuario = User::create([
-    //             'id_tipo_usuario' => 2,
-    //             'nombre_usuario' => $validatedData['nombre_usuario'],
-    //             'email_usuario' => $validatedData['email_usuario'],
-    //             'password_usuario' => $validatedData['password_usuario'],
-    //         ]);
-
-    //         //token de Laravel Sanctum.
-    //         $token = $usuario->createToken('auth_token')->plainTextToken;
-    //         //json sin los datos de usuario
-    //         return Response::json([
-    //             'message' => 'Usuario registrado exitosamente',
-    //             'access_token' => $token,
-    //             'token_type' => 'Bearer',
-    //             // Se añade el objeto 'user' con los datos del usuario.
-    //             'user' => [
-    //                 'id' => $usuario->id_usuario,
-    //                 'nombre' => $usuario->nombre_usuario,
-    //                 'email' => $usuario->email_usuario,
-    //             ]
-    //         ], 201);
-
-    //     } catch (\Exception $e) {
-    //         // Log::error('Error en el registro de usuario: ' . $e->getMessage());
-    //         return Response::json([
-    //             'message' => 'Ocurrió un error al intentar registrar el usuario.',
-    //             'error' => $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
 
     public function registro(RegisterRequest $request)
     {
@@ -91,7 +57,16 @@ class AuthController extends Controller
             // $authController = new AuthController();
             // $userData = $authController->obtenerDatosCompletosUsuario($user->id_usuario)->getData();
 
+            
+
             $userData = $this->obtenerDatosCompletosUsuario($user->id_usuario)->getData();
+
+            // Se verifica si el método `obtenerDatosCompletosUsuario` devolvió un objeto de usuario
+            if (!isset($userData->user)) {
+                 // Si no hay una propiedad 'user', significa que hubo un error.
+                 // Retornamos la respuesta de error de ese método.
+                 return $userData;
+            }
 
             return response()->json([
                 'message' => 'Inicio de sesión exitoso',
@@ -100,20 +75,6 @@ class AuthController extends Controller
                 'user' => $userData->user,
             ]);
 
-
-            // obtenerDatosCompletosUsuario($usuario->id_usuario);
-            // 4. Retornar la respuesta JSON con todos los datos.
-            // return Response::json([
-            //     'message' => 'Usuario registrado exitosamente',
-            //     'access_token' => $token,
-            //     'token_type' => 'Bearer',
-            //     'user' => [
-            //         'id' => $usuario->id_usuario,
-            //         'nombre' => $usuario->nombre_usuario,
-            //         'email' => $usuario->email_usuario,
-            //         'alias' => $usuario->alias_usuario, // Se añade el alias a la respuesta
-            //     ]
-            // ], 201);
 
         } catch (\Exception $e) {
             Log::error('Error en el registro de usuario: ' . $e->getMessage());
