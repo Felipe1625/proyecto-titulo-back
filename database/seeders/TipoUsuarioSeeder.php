@@ -13,9 +13,11 @@ class TipoUsuarioSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('tipo_usuario')->insert([
+        $tipos = [
             ['id_tipo_usuario' => 1, 'nombre_tipo_usuario' => 'Administrador', 'descripcion_tipo_usuario' => 'Usuario con permisos de administrador.'],
             ['id_tipo_usuario' => 2, 'nombre_tipo_usuario' => 'Usuario', 'descripcion_tipo_usuario' => 'Usuario regular del sistema.'],
-        ]);
+        ];
+
+        DB::table('tipo_usuario')->upsert($tipos, ['id_tipo_usuario']);
     }
 }
