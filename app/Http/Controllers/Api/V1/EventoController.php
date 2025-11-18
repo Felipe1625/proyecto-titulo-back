@@ -74,6 +74,7 @@ class EventoController extends Controller
                 'cantidad_personas_evento' => $eventoData['cantidad_personas'],
                 'fk_id_organizador' => $organizador->id_usuario,
                 'fk_id_lugar_publico' => $lugarPublico->id_lugar, // Se asocia el nuevo lugar
+                'estado_evento'=>'activo'
             ]);
             Log::info("Evento público creado con ID: {$evento->id_evento}");
 
