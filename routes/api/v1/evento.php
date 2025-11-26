@@ -12,3 +12,4 @@ Route::post('/eliminar-evento', [EventoController::class, 'eliminar_evento']);
 Route::post('/responder-evento-usuario-invitacion', [EventoController::class, 'responder_evento_usuario_invitacion']);
 Route::post('/cambiar-estado-evento', [EventoController::class, 'cambiar_estado_evento']);
 Route::post('/obtener-estado-evento', [EventoController::class, 'obtener_estado_evento']);
+Route::get('/listado-problema-valoracion-evento', [EventoController::class, 'listado_problema_valoracion_evento']);

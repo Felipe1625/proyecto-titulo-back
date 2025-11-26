@@ -15,6 +15,7 @@ use App\Models\Evento;
 use App\Models\EventoUsuario; 
 use App\Models\EventoInteres; 
 use App\Models\EventoUsuarioInvitacion; 
+use App\Models\ProblemaValoracionEvento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -635,6 +636,12 @@ class EventoController extends Controller
                 'error' => 'No se pudo obtener el estado del evento.'
             ], 500);
         }
+    }
+
+     public function listado_problema_valoracion_evento(): JsonResponse
+    {
+        $probelmas = ProblemaValoracionEvento::all();
+        return response()->json($probelmas);
     }
 
 
