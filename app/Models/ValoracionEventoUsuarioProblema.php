@@ -17,16 +17,6 @@ class ValoracionEventoUsuarioProblema extends Model
         return $this->belongsTo(ValoracionEventoUsuario::class, 'id_valoracion', 'id_valoracion');
     }
 
-    public function usuario(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
-    }
-
-    public function evento(): BelongsTo
-    {
-        return $this->belongsTo(Evento::class, 'id_evento', 'id_evento');
-    }
-
     public function detalleProblema(): BelongsTo
     {
         return $this->belongsTo(

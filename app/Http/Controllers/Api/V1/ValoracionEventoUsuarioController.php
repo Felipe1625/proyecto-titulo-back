@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ValoracionEventoUsuarioController extends Controller
 {
@@ -23,16 +24,16 @@ class ValoracionEventoUsuarioController extends Controller
             'problemas_ids.*' => 'integer|exists:problema_valoracion_evento,id_problema_valoracion_evento',
         ]);
 
-        $data = $validator->validated();
         $problemas_ids = $data['problemas_ids'] ?? [];
+        $problemas_ids = $request->input('problemas_ids') ?? [];
 
         try {
             DB::beginTransaction();
 
             $valoracion = ValoracionEventoUsuario::create([
-                'id_usuario' => $data['id_usuario'],
-                'id_evento' => $data['id_evento'],
-                'calificacion' => $data['calificacion'],
+                'id_usuario' => $request->input('id_usuario'),
+                'id_evento' => $request->input('id_evento'),
+                'calificacion' => $request->input('calificacion'),
                 'fecha_valoracion' => Carbon::now(),
             ]);
 
@@ -43,9 +44,7 @@ class ValoracionEventoUsuarioController extends Controller
                 foreach ($problemas_ids as $problema_id) {
                     $registrosProblemas[] = [
                         'id_valoracion' => $valoracion->id_valoracion,
-                        'id_problema_valoracion_evento' => $problema_id,
-                        'id_usuario' => $data['id_usuario'],
-                        'id_evento' => $data['id_evento'],
+                        'id_problema_valoracion_evento' => $problema_id
                     ];
                 }
 
@@ -54,11 +53,9 @@ class ValoracionEventoUsuarioController extends Controller
 
             DB::commit();
             return response()->json([
-                'success' => true,
-                'message' => 'Valoración guardada exitosamente.',
                 'data' => [
-                    'id_valoracion' => $valoracion->id_valoracion,
-                    'problemas_asociados' => count($problemas_ids)
+                    'error'=>false,
+                    'mensaje' => 'Valoracion guardada de forma correcta.'
                 ]
             ], 201);
 
@@ -66,9 +63,11 @@ class ValoracionEventoUsuarioController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'success' => false,
-                'message' => 'Error al guardar la valoración y sus problemas.',
-                'error' => $e->getMessage()
+                'data' => [
+                    'error'=>true,
+                    'mensaje' => 'Error al guardar la valoración y sus problemas.',
+                    'log_error' => $e->getMessage()
+                ]
             ], 500);
         }
     }
