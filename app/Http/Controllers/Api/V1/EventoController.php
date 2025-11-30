@@ -644,5 +644,51 @@ class EventoController extends Controller
         return response()->json($probelmas);
     }
 
+    public function obtener_usuarios_reportar_evento(Request $request): JsonResponse
+    {
+        $request->validate([
+            'id_evento' => 'required|integer|exists:evento,id_evento',
+            'id_usuario' => 'required|integer|exists:usuario,id_usuario',
+        ]);
 
+        try {
+            $idEvento = $request->input('id_evento');
+            $idUsuarioSolicitante = $request->input('id_usuario');
+
+            $evento = Evento::with('usuarios', 'organizador')->findOrFail($idEvento);
+            
+            $organizador = $evento->organizador;
+            $asistentes = $evento->usuarios;
+
+            $todosLosUsuarios = $asistentes->toBase();
+            if ($organizador && !$todosLosUsuarios->contains('id_usuario', $organizador->id_usuario)) {
+                $todosLosUsuarios->push($organizador);
+            }
+
+            $usuariosFiltrados = $todosLosUsuarios->where('id_usuario', '!=', $idUsuarioSolicitante);
+
+            $usuariosData = $usuariosFiltrados->map(function ($usuario) use ($evento) {
+                return [
+                    'id_usuario' => $usuario->id_usuario,
+                    'nombre_usuario' => $usuario->nombre_usuario,
+                    'es_organizador' => $usuario->id_usuario == $evento->fk_id_organizador,
+                ];
+            });
+
+            return response()->json([
+                'message' => 'Usuarios para reportar obtenidos con éxito.',
+                'data' => $usuariosData->values(),
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Evento no encontrado.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ocurrió un error al obtener los usuarios para reportar.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

@@ -15,3 +15,4 @@ Route::post('/cambiar-estado-evento', [EventoController::class, 'cambiar_estado_
 Route::post('/obtener-estado-evento', [EventoController::class, 'obtener_estado_evento']);
 Route::get('/listado-problema-valoracion-evento', [EventoController::class, 'listado_problema_valoracion_evento']);
 Route::post('/guardar-valoracion-evento-usuario', [ValoracionEventoUsuarioController::class, 'guardar_valoracion_evento_usuario']);
+Route::post('/obtener-usuarios-reportar-evento', [EventoController::class, 'obtener_usuarios_reportar_evento']);
